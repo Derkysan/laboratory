@@ -9,9 +9,8 @@ export const AppRouter = () => {
   return (
     <AppLayout>
       <Routes>
-        {/* <Route path="/pokemon/:id" element={ <DetailPage /> } /> */}
         <Route path="/pokemon/*" element={ <PokemonRoutes /> } />
-        <Route path="/" element={ <LabRoutes /> } />
+        <Route path="/*" element={ <LabRoutes /> } />
       </Routes>
     </AppLayout>
   )
