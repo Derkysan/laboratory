@@ -11,7 +11,7 @@ export const LabPage = () => {
             <div className="card-body">
               <h3 className="text-warning fw-bolder">PokemonApp</h3>
               <p>Fetch API project</p>
-              <Link to={'/pokemon'} className="btn border stretched-link btn-outline-warning border-warning">Go</Link>
+              <Link to={'/pokemon'} className="btn border stretched-link border-warning text-warning">Go</Link>
             </div>
             <div className="card-footer text-end border-warning">
               <small>Footer data</small>
