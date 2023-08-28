@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom"
-import { CardList } from "../components/CardList"
 
 import { useEffect, useState } from "react";
 
@@ -7,25 +6,36 @@ import { Pokemon } from "../hooks/useFetchPokemons";
 import { PokemonAPI } from "../interfaces/PokemonsResponse";
 
 import 'react-loading-skeleton/dist/skeleton.css'
+import { CardList } from "../components/CardList";
+import { TableList } from "../components/TableList";
 
-const HomePagen = () => {
+const HomePage = () => {
 
-  const itemsPerPage = 20;
-  // const itemsPerPage = 1000;
-  
+  const pokemonAPI = 'https://pokeapi.co/api/v2/pokemon';
+  const itemsPerPage = 24;
+
+  const [dataCount, setDataCount] = useState<number | null>(null);
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [searchTerm, setSearchTerm] = useState('');
+  const [view, setView] = useState('grid');
+
+  useEffect(() => {
+    fetch(pokemonAPI)
+      .then(response => response.json())
+      .then((data: PokemonAPI) => {
+        setDataCount(data.count);
+      })
+  }, [])
   
   const fetchPokemons = async () => {
 
     setIsLoading(true);
     
     try {
-      const result = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${itemsPerPage}&offset=${offset}`);
-      // const result = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${itemsPerPage}`);
+      const result = await fetch(`${pokemonAPI}?limit=${itemsPerPage}&offset=${offset}`);
       
       if (result.ok) {
         const data: PokemonAPI = await result.json();
@@ -41,11 +51,10 @@ const HomePagen = () => {
               name: item.name,
               image,
             }
-        })
-        // setTimeout(() => {
-          setIsLoading(false);
-          setPokemons(pokemonList)
-        // }, 500);
+        });
+        
+        setPokemons(pokemonList);
+        setIsLoading(false);
       }
 
     } catch (error) {
@@ -57,6 +66,10 @@ const HomePagen = () => {
     fetchPokemons();
   }, [offset]);
 
+  const handleView = (view: string) => {
+    setView(view);
+  }
+
   const handleNext = () => {
     setOffset( prev => prev + itemsPerPage )
     setCurrentPage( prev => prev + 1 )
@@ -67,26 +80,34 @@ const HomePagen = () => {
     setCurrentPage( prev => prev - 1 )
   }
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm( e.target.value )
-  }
-  
-  const filteredPokemons = () => {
-    return (
-      searchTerm 
-        ? ( pokemons.filter( poke => {
-              return poke.name.toLowerCase().includes( searchTerm.toLowerCase() )
-            }) ) 
-        : pokemons
-    )
-  }
+  // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (event.key === 'Enter') {
+  //     event.preventDefault()
+  //     // handleSearch;
+  //   }
+  // };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      handleSearch;
-    }
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchTerm( e.target.value )
+  // }
+
+  // const filteredPokemons = () => {
+  //   return (
+  //     searchTerm 
+  //       // ? ( pokemons.filter( poke => {
+  //       //       return poke.name.toLowerCase().includes( searchTerm.toLowerCase() )
+  //       //     }) ) 
+  //       ? pokemons
+  //       : pokemons
+  //   )
+  // }
+
+  // const handleSearch = () => {
+  //   if (searchTerm.length === 0) return
+  //   console.log(searchTerm);
+  // }
+
+  
 
   return (
     <>
@@ -99,64 +120,156 @@ const HomePagen = () => {
           Back
         </Link>
           <a className="navbar-brand text-white-50 fw-bolder">Pokemon</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <button className="navbar-toggler border-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-lg-0">
-              {/* <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">Home</a>
-              </li>*/}
-              {/* <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Filter
-                </a>
-                <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">Action</a></li>
-                  <li><a className="dropdown-item" href="#">Another action</a></li>
-                  <li><a className="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li> */}
-            </ul>
-            <form className="d-flex" role="search">
+            {/* <form className="d-flex ms-auto" role="search">
               <input 
                 className="form-control border-warning text-warning" 
                 type="text" 
                 placeholder="Search" 
                 value={searchTerm}
-                onChange={ handleSearch }
-                onKeyDown={handleKeyDown}
+                onChange={ handleChange }
+                onKeyDown={ handleKeyDown }
                 />
                 <button 
+                  type="button"
                   className="btn btn-outline-warning ms-2 btn-sm" 
-                  type="submit"
-                  onClick={ () => {} }
+                  onClick={ handleSearch }
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
                       <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                     </svg>
                 </button> 
-            </form>
+            </form> */}
           </div>
         </div>
       </nav>
 
-      <div className="row">
-        {/* <div className="col-12 col-md-3"></div> */}
-        <div className="col-12">
-          <CardList 
-            isLoading={isLoading} 
-            currentPage={currentPage} 
-            offset={offset} 
-            handleNext={handleNext} 
-            handlePrev={handlePrev}
-            pokemons={ filteredPokemons() } 
-            />
+      {/* controls */}
+      <div className="row align-items-center my-4">
+        <div className="col">
+          <div className="d-flex align-items-center gap-2">
+            <button 
+              className={`btn btn-link border-0 d-flex align-items-center justify-content-center text-secondary px-2 ${ view === 'grid' && 'border border-warning text-warning' }`}
+              onClick={ () => handleView('grid') }>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-grid" viewBox="0 0 16 16">
+                <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+              </svg>
+            </button>
+
+            <button 
+              className={`btn btn-link border-0 d-flex align-items-center justify-content-center text-secondary px-2 ${ view === 'table' && 'border border-warning text-warning' }`}
+              onClick={ () => handleView('table') }>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-table" viewBox="0 0 16 16">
+                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="col text-end">
+          <div className="d-flex justify-content-end gap-2">
+            <p className="font-monospace text-muted text-decoration-underline m-0 d-flex align-items-center"><small>Showing {(itemsPerPage * currentPage) - itemsPerPage + 1} - { itemsPerPage * currentPage } of { dataCount }</small></p>
+            <nav>
+              <ul className="pagination m-0">
+                <li className={`page-item ${ (offset === 0 || isLoading) ? 'disabled' : '' }`}>
+                  <button 
+                    className="btn btn-link text-warning"
+                    onClick={ handlePrev }
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                      </svg>
+                    </button>
+                </li>
+                <li className={`page-item ${ ( isLoading ) ? 'disabled' : '' }`}>
+                  <button 
+                    disabled={ isLoading ? true : false }
+                    className="btn btn-link text-warning"
+                    onClick={ handleNext }
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                      </svg>
+                    </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>    
+      </div>
+
+      <div className="row mb-4">
+        <div className="col">
+          {
+            (view === 'grid')
+              ? <CardList pokemons={pokemons} />
+              : <TableList pokemons={pokemons} />
+          }
         </div>
       </div>
+
+      <div className="row mb-2">
+        <div className="col">
+          <div className="d-flex align-items-center justify-content-end gap-3">
+              <button 
+                className="btn btn-sm btn-outline-warning px-2"
+                onClick={ handlePrev }
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" className="bi bi-chevron-left" viewBox="0 0 16 16">
+                  <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                </svg>
+              </button>
+              {/* <button type="button" className="btn btn-outline-warning">1</button> */}
+              <span className="text-muted">{ currentPage }</span>
+              {/* <button type="button" className="btn btn-outline-warning">3</button> */}
+              <button 
+                type="button" 
+                className="btn btn-sm btn-outline-warning px-2"
+                onClick={ handleNext }
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" className="bi bi-chevron-right" viewBox="0 0 16 16">
+                  <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="row">
+        <div className="col-12">
+          {
+            (view === 'grid')
+              ? (
+                <CardList 
+                  itemsPerPage={itemsPerPage}
+                  isLoading={isLoading} 
+                  currentPage={currentPage} 
+                  offset={offset} 
+                  handleNext={handleNext} 
+                  handlePrev={handlePrev}
+                  pokemons={ filteredPokemons() } 
+                />
+              )
+              : (
+                <TableList 
+                  itemsPerPage={itemsPerPage}
+                  isLoading={isLoading} 
+                  currentPage={currentPage} 
+                  offset={offset} 
+                  handleNext={handleNext} 
+                  handlePrev={handlePrev}
+                  pokemons={ filteredPokemons() }   
+                />
+              )
+          }
+        </div>
+      </div> */}
 
     </>
   )
 }
 
-export default HomePagen
+export default HomePage
