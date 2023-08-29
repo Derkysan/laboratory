@@ -71,8 +71,10 @@ const HomePage = () => {
   }
 
   const handleNext = () => {
+    setIsLoading(true);
     setOffset( prev => prev + itemsPerPage )
     setCurrentPage( prev => prev + 1 )
+    setIsLoading(false);
   }
   const handlePrev = () => {
     if (offset === 0) return
@@ -107,8 +109,6 @@ const HomePage = () => {
   //   console.log(searchTerm);
   // }
 
-  
-
   return (
     <>
       <nav className="navbar navbar-expand-md mb-3 rounded-3 border border-warning">
@@ -119,9 +119,12 @@ const HomePage = () => {
           </svg> 
           Back
         </Link>
-          <a className="navbar-brand text-white-50 fw-bolder">Pokemon</a>
-          <button className="navbar-toggler border-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
+          <a className="navbar-brand fw-bolder text-warning">Pokemon</a>
+          <button className="navbar-toggler border-warning text-warning d-flex justify-content-center align-items-center py-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            {/* <span className="navbar-toggler-icon border-warning"></span> */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-list" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+            </svg>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             {/* <form className="d-flex ms-auto" role="search">
@@ -149,7 +152,7 @@ const HomePage = () => {
 
       {/* controls */}
       <div className="row align-items-center my-4">
-        <div className="col">
+        <div className="col-3">
           <div className="d-flex align-items-center gap-2">
             <button 
               className={`btn btn-link border-0 d-flex align-items-center justify-content-center text-secondary px-2 ${ view === 'grid' && 'border border-warning text-warning' }`}
@@ -237,36 +240,6 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-
-      {/* <div className="row">
-        <div className="col-12">
-          {
-            (view === 'grid')
-              ? (
-                <CardList 
-                  itemsPerPage={itemsPerPage}
-                  isLoading={isLoading} 
-                  currentPage={currentPage} 
-                  offset={offset} 
-                  handleNext={handleNext} 
-                  handlePrev={handlePrev}
-                  pokemons={ filteredPokemons() } 
-                />
-              )
-              : (
-                <TableList 
-                  itemsPerPage={itemsPerPage}
-                  isLoading={isLoading} 
-                  currentPage={currentPage} 
-                  offset={offset} 
-                  handleNext={handleNext} 
-                  handlePrev={handlePrev}
-                  pokemons={ filteredPokemons() }   
-                />
-              )
-          }
-        </div>
-      </div> */}
 
     </>
   )

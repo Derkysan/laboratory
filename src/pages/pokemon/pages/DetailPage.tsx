@@ -1,10 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { PokemonDetail } from "../interfaces/PokemonDetail";
 import Skeleton from "react-loading-skeleton";
 
 export const DetailPage = () => {
+
+  const navigate = useNavigate();
 
 
   const [isLoading, setIsLoading] = useState(true);
@@ -48,16 +50,40 @@ export const DetailPage = () => {
     <>
      <nav className="navbar navbar-expand-md mb-3 rounded-3 border border-warning">
         <div className="container-fluid">
-          <Link to={"/pokemon"} className="btn btn-outline-warning btn-sm me-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left me-2" viewBox="0 0 16 16">
-              <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-            </svg> 
-            Back
-          </Link>
-          <a className="navbar-brand me-auto text-white-50 fw-bolder">Pokemon</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
+        <button className="btn btn-outline-warning btn-sm me-3" onClick={ () => navigate(-1) }>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+            <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+          </svg> 
+          Back
+        </button>
+          <a className="navbar-brand fw-bolder text-warning">Pokemon</a>
+          <button className="navbar-toggler border-warning text-warning d-flex justify-content-center align-items-center py-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            {/* <span className="navbar-toggler-icon border-warning"></span> */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-list" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+            </svg>
           </button>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            {/* <form className="d-flex ms-auto" role="search">
+              <input 
+                className="form-control border-warning text-warning" 
+                type="text" 
+                placeholder="Search" 
+                value={searchTerm}
+                onChange={ handleChange }
+                onKeyDown={ handleKeyDown }
+                />
+                <button 
+                  type="button"
+                  className="btn btn-outline-warning ms-2 btn-sm" 
+                  onClick={ handleSearch }
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </button> 
+            </form> */}
+          </div>
         </div>
       </nav>
       

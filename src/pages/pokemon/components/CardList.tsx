@@ -48,7 +48,7 @@ export const CardList = ({
                         <img src={ item.image } className="card-img-top" style={{ width: 150, height: 150 }} alt={ item.name } />
                       </div>
                       <div className="card-header border-0">
-                        <h6 className="card-title text-warning">{ item.name.charAt(0).toUpperCase()}{item?.name.slice(1) }</h6>
+                        <h6 className="card-title text-warning">{ item.id }. { item.name.charAt(0).toUpperCase()}{item?.name.slice(1) }</h6>
                       </div>
                     </Link>
                 </div>
